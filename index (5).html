@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Essay Architect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a5c; --blue:#1f6feb; --sky:#e6f0ff; --bp:#0b3d91; --yellow:#ffc400; --orange:#ff7a00; --teal:#00b3a4;
+  --pink:#ff4f8b; --purple:#7c4dff; --green:#1f9d55; --red:#d6333b; --ink:#18223a; --muted:#566079; --line:#e1e7f2; --card:#fff; --hl:#fff3a3;
+  --c-topic:#1f6feb; --c-ev:#ff7a00; --c-el:#1f9d55; --c-tie:#7c4dff; --c-hook:#ff4f8b; --c-bg:#00b3a4; --c-ci:#d6333b;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Nunito,system-ui,-apple-system,sans-serif;color:var(--ink);font-size:18px;line-height:1.6;min-height:100vh;
+  background-color:#dfeaff;background-image:linear-gradient(rgba(31,111,235,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(31,111,235,.10) 1px,transparent 1px),linear-gradient(180deg,#d9e7ff,#fff6e0);
+  background-size:28px 28px,28px 28px,100% 100%;background-attachment:fixed}
+button{font:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:30;background:var(--bp);color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:5px solid var(--yellow);
+  background-image:repeating-linear-gradient(45deg,transparent 0 14px,rgba(255,255,255,.04) 14px 28px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .logo{font-size:1.9rem}
+.brand h1{font-family:'Baloo 2';font-size:1.35rem;margin:0;line-height:1}
+.chip{display:inline-block;background:var(--yellow);color:#3a2c00;font-weight:900;font-size:.72rem;padding:1px 9px;border-radius:999px}
+.voicebar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:.82rem;font-weight:800}
+.seg{display:flex;background:rgba(255,255,255,.15);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;color:#fff;font-weight:800;padding:4px 10px;border-radius:999px;font-size:.82rem}
+.seg button.on{background:#fff;color:var(--bp)}
+.hbtn{border:0;background:var(--yellow);color:#3a2c00;border-radius:999px;padding:5px 12px;font-weight:900;font-size:.85rem}
+.stopbtn{border:0;background:var(--pink);color:#fff;font-weight:800;border-radius:999px;padding:5px 11px;font-size:.82rem;display:none}
+.stopbtn.show{display:inline-block}
+main{max-width:1240px;margin:0 auto;padding:16px 16px 60px}
+.card{background:var(--card);border-radius:22px;box-shadow:0 10px 30px rgba(15,42,92,.15);padding:22px;border:3px solid #fff}
+.center{max-width:820px;margin:0 auto}
+h2{font-family:'Baloo 2';color:var(--navy);font-size:1.85rem;margin:0 0 6px;line-height:1.15}
+h3{font-family:'Baloo 2';color:var(--blue);margin:14px 0 6px;font-size:1.25rem}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.big{border:0;border-radius:16px;padding:12px 22px;font-weight:900;font-size:1.06rem;color:#fff;background:var(--blue);box-shadow:0 5px 0 #0f48a8;transition:transform .08s}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 #0f48a8}
+.big.y{background:var(--yellow);color:#3a2c00;box-shadow:0 5px 0 #c69500}
+.big.o{background:var(--orange);box-shadow:0 5px 0 #b85700}
+.big.g{background:var(--green);box-shadow:0 5px 0 #136b39}
+.big:disabled{opacity:.45;cursor:not-allowed}
+.ghost{border:3px solid var(--blue);background:#fff;color:var(--blue);border-radius:14px;padding:7px 14px;font-weight:900;font-size:.95rem}
+.ghost:disabled{opacity:.4}
+.speak{border:0;background:var(--sky);color:var(--navy);border-radius:999px;padding:6px 14px;font-weight:900;font-size:.9rem;display:inline-flex;align-items:center;gap:6px}
+.speak:hover{background:#d3e4ff}
+.speak.sm{padding:3px 10px;font-size:.8rem}
+input[type=text],textarea{font:inherit;font-size:1.05rem;padding:10px 12px;border-radius:12px;border:3px solid var(--line);width:100%;background:#fff;color:var(--ink)}
+textarea{min-height:140px;resize:vertical;line-height:1.55}
+input:focus,textarea:focus{outline:none;border-color:var(--blue)}
+.tip{background:#fff7d1;border-left:6px solid var(--yellow);border-radius:12px;padding:10px 14px;margin:12px 0}
+.note{background:var(--sky);border-left:6px solid var(--blue);border-radius:12px;padding:10px 14px;margin:12px 0}
+
+/* skyline progress */
+.skyline{display:flex;align-items:flex-end;gap:5px;height:78px;max-width:1240px;margin:0 auto 12px;padding:6px 10px 0;background:linear-gradient(180deg,#9cc6ff,#cfe3ff);border-radius:18px;border:3px solid #fff;overflow:hidden;position:relative}
+.skyline::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:#7b5d3a}
+.bld{flex:1;border:0;border-radius:6px 6px 0 0;position:relative;padding:0;transition:height .5s;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-weight:900;font-size:.78rem;z-index:1;min-width:0}
+.bld span{margin-top:3px}
+.bld.todo{background:repeating-linear-gradient(0deg,#dbe6f7 0 6px,#c7d6ee 6px 12px);color:#7c8aa5}
+.bld.cur{outline:3px solid var(--yellow);outline-offset:-3px}
+.bld.done::before{content:"";position:absolute;inset:14px 4px 10px 4px;background-image:radial-gradient(#fff7b0 2px,transparent 2.5px);background-size:9px 11px;opacity:.85}
+
+/* lesson */
+.lhead{display:grid;grid-template-columns:74px 1fr;gap:14px;align-items:center;border-radius:20px;padding:14px;color:#fff;margin-bottom:12px}
+.lhead .ic{font-size:2.8rem;background:rgba(255,255,255,.22);border-radius:18px;height:74px;display:flex;align-items:center;justify-content:center}
+.lhead .kick{font-weight:900;font-size:.85rem;opacity:.9;text-transform:uppercase;letter-spacing:.06em}
+.lhead .tt{font-family:'Baloo 2';font-size:1.7rem;font-weight:800;line-height:1.05}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+@media (max-width:680px){.grid3,.grid2{grid-template-columns:1fr}}
+.tile{border-radius:16px;padding:12px;color:#fff;font-weight:700}
+.tile b{font-family:'Baloo 2';font-size:1.2rem;display:block;line-height:1.1;margin-bottom:2px}
+.box{border:3px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff}
+.seg-t{background:#e3eeff;border-bottom:3px solid var(--c-topic)} .seg-e{background:#fff0e0;border-bottom:3px solid var(--c-ev)}
+.seg-l{background:#e2f5ea;border-bottom:3px solid var(--c-el)} .seg-x{background:#efe8ff;border-bottom:3px solid var(--c-tie)}
+.seg-h{background:#ffe5ef;border-bottom:3px solid var(--c-hook)} .seg-b{background:#dcf6f3;border-bottom:3px solid var(--c-bg)} .seg-c{background:#fde4e5;border-bottom:3px solid var(--c-ci)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.legend span{border-radius:8px;padding:2px 10px;font-weight:900;font-size:.85rem;color:#fff}
+.model{line-height:2;font-size:1.05rem}
+.model span{border-radius:4px;padding:1px 2px}
+.plain .model span{background:none!important;border-bottom:0!important}
+.burger{display:grid;gap:6px;max-width:460px;margin:10px auto}
+.burger div{border-radius:14px;padding:10px 14px;font-weight:900;text-align:center;color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chips span,.chips button{border-radius:999px;padding:3px 11px;font-weight:800;font-size:.88rem;border:2px solid var(--line);background:#fff}
+.chips button{border-color:var(--orange);color:#a34a00}
+table{border-collapse:collapse;width:100%;font-size:.95rem;margin:8px 0}
+th,td{border:2px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--sky)}
+
+/* sources */
+.src{border:3px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fffdf7}
+.src .stitle{font-family:'Baloo 2';font-size:1.3rem;color:var(--navy);line-height:1.15}
+.src .slab{display:inline-block;background:var(--navy);color:#fff;border-radius:8px;font-weight:900;font-size:.8rem;padding:1px 9px;margin-bottom:4px}
+.para{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:6px 8px;border-radius:10px;transition:background .25s}
+.para .num{font-family:'Baloo 2';font-weight:800;color:#fff;background:var(--blue);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.85rem;margin-top:3px}
+.para p{margin:0}
+.para.reading{background:var(--hl)}
+.stabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.stabs button{border:3px solid var(--line);background:#fff;border-radius:12px;padding:4px 12px;font-weight:900;font-size:.88rem;color:var(--muted)}
+.stabs button.on{border-color:var(--blue);background:var(--sky);color:var(--navy)}
+
+/* activities */
+.act{margin-top:16px;border-top:4px dashed var(--line);padding-top:14px}
+.act .atitle{font-family:'Baloo 2';font-weight:800;color:var(--orange);font-size:1.2rem}
+.stem{font-size:1.1rem;font-weight:800;margin:6px 0}
+.choices{display:flex;flex-direction:column;gap:8px;margin:8px 0 10px}
+.choice{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;text-align:left;border:3px solid var(--line);background:#fff;border-radius:14px;padding:9px 12px;font-size:1.02rem;color:var(--ink)}
+.choice:hover:not(:disabled){border-color:var(--blue)}
+.choice .let{width:32px;height:32px;border-radius:10px;background:var(--sky);color:var(--navy);font-weight:900;display:flex;align-items:center;justify-content:center}
+.choice.sel{border-color:var(--blue);background:#eef4ff}.choice.sel .let{background:var(--blue);color:#fff}
+.choice.isright{border-color:var(--green);background:#e2f5ea}.choice.isright .let{background:var(--green);color:#fff}
+.choice.iswrong{border-color:var(--red);background:#fde7e8}.choice.iswrong .let{background:var(--red);color:#fff}
+.choice:disabled{cursor:default}
+.fb{border-radius:14px;padding:10px 14px;margin:8px 0;font-weight:700}
+.fb.good{background:#e2f5ea;border:3px solid var(--green)}
+.fb.bad{background:#fde7e8;border:3px solid var(--red)}
+.fb strong{font-family:'Baloo 2';font-size:1.12rem}
+.sortrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border:3px solid var(--line);border-radius:14px;padding:9px 12px;margin:7px 0}
+.sortrow.ok{border-color:var(--green);background:#e2f5ea}
+.sortrow.no{border-color:var(--red);background:#fde7e8}
+.pill{border:3px solid var(--blue);background:#fff;color:var(--blue);border-radius:999px;padding:3px 12px;font-weight:900;font-size:.86rem}
+.taps{font-size:1.15rem;line-height:2.3;background:#fbfcff;border:3px solid var(--line);border-radius:16px;padding:12px 14px}
+.tk{border-radius:8px;padding:3px 6px;cursor:pointer;border-bottom:3px dotted #9db6e8;margin-right:2px}
+.tk.on{background:#ffe48a;border-bottom-color:var(--orange)}
+.tk.hit{background:#c8f0d6;border-bottom:3px solid var(--green)}
+.tk.miss{background:#fff;outline:3px dashed var(--green)}
+.tk.extra{background:#fde7e8;border-bottom-color:var(--red)}
+.locked .tk{cursor:default}
+.ordlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.ord{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;text-align:left;border:3px solid var(--line);background:#fff;border-radius:14px;padding:9px 12px;font-size:1rem}
+.ord .n{width:32px;height:32px;border-radius:50%;background:#eef2f8;color:var(--muted);font-weight:900;display:flex;align-items:center;justify-content:center}
+.ord.picked{border-color:var(--blue);background:#eef4ff}.ord.picked .n{background:var(--blue);color:#fff}
+.ord.ok{border-color:var(--green);background:#e2f5ea}.ord.ok .n{background:var(--green);color:#fff}
+.ord.no{border-color:var(--red);background:#fde7e8}.ord.no .n{background:var(--red);color:#fff}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px}
+.wc{font-size:.85rem;color:var(--muted);font-weight:700}
+
+/* write */
+.wwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.spanel{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow:auto}
+@media (max-width:900px){.wwrap{grid-template-columns:1fr}.spanel{position:static;max-height:none}}
+.wpart{border-radius:18px;border:3px solid var(--line);padding:12px;margin:12px 0;background:#fff}
+.wpart .wl{font-family:'Baloo 2';font-weight:800;font-size:1.2rem;display:flex;align-items:center;gap:8px}
+.wpart ul{margin:4px 0 8px;padding-left:22px;font-size:.95rem}
+.check{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-weight:700;font-size:.95rem}
+.check input{width:22px;height:22px;margin-top:2px;flex-shrink:0}
+.modal{position:fixed;inset:0;background:rgba(10,20,50,.55);z-index:80;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow:auto}
+.modal .card{max-width:900px;width:100%}
+.pop{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-family:'Baloo 2';font-size:2.3rem;font-weight:800;color:var(--blue);pointer-events:none;animation:pop 1.1s forwards;z-index:60;text-shadow:0 3px 0 #fff}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
+.ritem{border:3px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;white-space:pre-wrap;background:#fbfcff;text-align:left}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+footer{text-align:center;font-size:.8rem;color:var(--muted);padding:10px}
+footer button{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.8rem}
+@media print{header,footer,.skyline,.noprint{display:none!important}body{background:#fff}.card{box-shadow:none;border:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">🏗️</span>
+    <div><h1>Essay Architect</h1><span class="chip">Grade 6 · Expository Writing · ELA.6.C.1.4</span></div></div>
+  <div class="voicebar">
+    <button class="hbtn" onclick="openSources()">📚 Sources</button>
+    <span>🔊</span>
+    <div class="seg" id="voiceSeg"><button data-v="female" class="on">Female</button><button data-v="male">Male</button><button data-v="mixed">Mixed</button></div>
+    <div class="seg" id="rateSeg"><button data-r="0.8">Slow</button><button data-r="0.95" class="on">Normal</button></div>
+    <button class="stopbtn" id="stopBtn" onclick="stopSpeech()">■ Stop</button>
+  </div>
+</header>
+<main id="app"></main>
+<footer>Florida B.E.S.T. Grade 6 Writing · <button onclick="teacherReset()">Teacher reset</button></footer>
+<div id="modalRoot"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ===================== SETTINGS ===================== */
+const TEACHER_PIN = "1234";            // change to your own PIN
+const STORE = "essayArchitect_v1_";
+
+/* ===================== PROMPT & SOURCES ===================== */
+const PROMPT = "Florida's manatees face serious challenges. Write an essay that explains the challenges manatees face and how people are working to protect them. Use information from both sources to support your response.";
+const SOURCES = [
+ {label:"Source 1", title:"Florida's Gentle Giants Face Big Challenges", p:[
+  "The Florida manatee is sometimes called a \"sea cow\" because it spends much of its day slowly grazing on underwater plants. These gentle animals can grow to be about 10 feet long and weigh more than 1,000 pounds. In 1975, the manatee became Florida's official state marine mammal.",
+  "Even though manatees are large, they are in danger in several ways. One of the biggest problems is cold water. Manatees do not have much fat to keep them warm, so water colder than about 68 degrees Fahrenheit can make them sick. In winter, hundreds of manatees crowd into warm springs and the warm water near power plants to survive.",
+  "Manatees also need a lot of food. An adult manatee eats about 10 to 15 percent of its body weight in seagrass and other plants every day. Pollution in some waterways has caused large areas of seagrass to die. In 2021, more than 1,000 manatees died in Florida, and many of them starved because there was not enough seagrass to eat.",
+  "Boats are another serious threat. Manatees swim slowly and often stay near the surface of the water to breathe. Because of this, they can be struck by fast-moving boats. Scientists say that boat strikes are the leading human-related cause of manatee deaths. Many manatees that survive have scars on their backs from boat propellers."]},
+ {label:"Source 2", title:"Lending a Hand to Manatees", p:[
+  "Floridians care about manatees, and many people are working to help them. Government agencies, scientists, and volunteers all play a part.",
+  "One way people help is by protecting manatees from boats. Many waterways have signs marking manatee zones. In these zones, boaters must slow down so that manatees have time to move out of the way. Boaters are also encouraged to wear polarized sunglasses, which make it easier to spot manatees under the water.",
+  "Another way people help is by rescuing sick and injured manatees. The Florida Fish and Wildlife Conservation Commission, also called the FWC, works with zoos and aquariums to rescue manatees that have been hurt by boats, cold water, or hunger. At these special animal hospitals, manatees are fed, treated, and cared for until they are healthy enough to return to the wild.",
+  "People are also working to bring back the seagrass that manatees need. Communities are cleaning up polluted waterways, and some groups are planting new seagrass in areas where it has died. Students can help, too, by picking up trash, learning about manatees, and teaching others to respect these gentle giants.",
+  "These efforts are making a difference. In 2017, the U.S. government changed the manatee's status from \"endangered\" to \"threatened\" because their numbers had grown. Still, experts say manatees need continued help to stay safe."]}
+];
+const MODEL = {
+ title:"Saving Florida's Gentle Giants",
+ intro:[["h","Imagine an animal as heavy as a grand piano gliding quietly through a Florida spring."],["b"," The Florida manatee, our state marine mammal, is a gentle giant that many people love. However, these animals face serious dangers in the wild."],["c"," Manatees struggle with cold water, a lack of food, and boat strikes, but people across Florida are working hard to protect them."]],
+ b1:[["t","Manatees face several challenges that put their lives at risk."],["e"," One challenge is cold water. According to Source 1, \"water colder than about 68 degrees Fahrenheit can make them sick.\""],["l"," This means manatees must find warm springs or warm water near power plants every winter just to survive."],["e"," Another challenge is a lack of food. Source 1 explains that pollution has caused seagrass to die, and in 2021 many manatees starved."],["l"," Without enough seagrass, these huge animals cannot get the energy they need."],["e"," Finally, Source 1 states that boat strikes are \"the leading human-related cause of manatee deaths.\""],["l"," Because manatees swim slowly near the surface, fast boats can easily hit them."],["x"," Clearly, manatees face many dangers in their environment."]],
+ b2:[["t","Fortunately, people are taking action to help manatees."],["e"," First, according to Source 2, many waterways have manatee zones where boaters must slow down."],["l"," Slower boats give manatees time to swim out of the way, which helps prevent injuries."],["e"," In addition, the FWC works with zoos and aquariums to rescue sick and injured manatees. Source 2 explains that these animals are cared for \"until they are healthy enough to return to the wild.\""],["e"," People are also cleaning waterways and planting new seagrass."],["l"," This gives hungry manatees the food they need to stay healthy."],["x"," These efforts show that people can help solve many of the problems manatees face."]],
+ concl:[["c","In conclusion, Florida manatees face dangers from cold water, hunger, and boats, but people are working to protect them in many ways."],["b"," Thanks to these efforts, manatees were moved from \"endangered\" to \"threatened\" in 2017."],["h"," If Floridians keep working together, these gentle giants will glide through our waters for many years to come."]]
+};
+const SEGCLS = {h:"seg-h",b:"seg-b",c:"seg-c",t:"seg-t",e:"seg-e",l:"seg-l",x:"seg-x"};
+
+/* ===================== LESSONS ===================== */
+const LESSONS = [
+ { icon:"📐", color:"linear-gradient(135deg,#1f6feb,#0b3d91)", kick:"Lesson 1", title:"What Is Expository Writing?",
+   say:"Lesson 1. What is expository writing? Expository writing explains or informs. Its job is to teach the reader about a topic using facts, examples, and details from sources. It is not your opinion, and it is not a story. Here is how it compares. Expository writing explains or informs. Argumentative writing tries to convince the reader to agree with a claim. Narrative writing tells a story. On the Florida B.E.S.T. Writing test, you will read sources and write an essay on the computer. You have 120 minutes. Your essay is scored out of 12 points, in three areas: Purpose and Structure, Development, and Language. In this workshop, you will build an expository essay one piece at a time, like an architect builds a building.",
+   html:`<p><strong>Expository writing</strong> <em>explains</em> or <em>informs</em>. Its job is to <strong>teach the reader</strong> about a topic using facts, examples, and details from sources. It is <strong>not</strong> your opinion, and it is <strong>not</strong> a story.</p>
+   <div class="grid3">
+     <div class="tile" style="background:var(--blue)"><b>📘 Expository</b>Explains or informs<br><em>"Explain how…" "Describe why…"</em></div>
+     <div class="tile" style="background:var(--orange)"><b>📣 Argumentative</b>Convinces the reader of a claim<br><em>"Should…?" "Argue…"</em></div>
+     <div class="tile" style="background:var(--purple)"><b>📖 Narrative</b>Tells a story<br><em>"Write a story about…"</em></div></div>
+   <div class="note"><strong>🖥️ On the Florida B.E.S.T. Writing test:</strong> You read sources and type an essay on the computer in one <strong>120-minute</strong> session. Your essay is scored out of <strong>12 points</strong>: <strong>Purpose/Structure (4)</strong>, <strong>Development (4)</strong>, and <strong>Language (4)</strong>.</div>
+   <p>🏗️ In this workshop, you'll build an expository essay <strong>one piece at a time</strong>, the way an architect builds a building.</p>`,
+   acts:[{id:"s1", t:"sort", title:"Sort the Prompts", q:"Is each prompt asking for Expository, Argumentative, or Narrative writing?",
+     cats:[["x","📘 Expository"],["a","📣 Argumentative"],["n","📖 Narrative"]],
+     items:[["Explain how plants make their own food.","x"],["Should students be allowed to use phones at lunch? Convince your principal.","a"],["Write a story about a day you got lost.","n"],["Describe the steps a bill takes to become a law.","x"],["Write an essay explaining the causes and effects of hurricanes in Florida.","x"],["Argue whether schools should start later in the morning.","a"]]}]},
+ { icon:"🔍", color:"linear-gradient(135deg,#ff7a00,#ff4f8b)", kick:"Lesson 2", title:"Unpack the Prompt",
+   say:"Lesson 2. Unpack the prompt. Before you write anything, you must understand exactly what the prompt is asking. Architects read the blueprint before they build! Look for three things. First, the task word, such as explain or describe. Second, the topic and its parts. Third, the sources you must use. Here is today's prompt. " + PROMPT + " Tap the most important words and phrases in the prompt. Then press Check.",
+   html:`<p>Before you write, you must know <strong>exactly</strong> what the prompt is asking. Architects read the blueprint before they build! Look for:</p>
+   <div class="grid3">
+     <div class="tile" style="background:var(--orange)"><b>1️⃣ Task word</b>explain, describe, inform</div>
+     <div class="tile" style="background:var(--pink)"><b>2️⃣ Topic &amp; parts</b>What exactly do I explain? How many parts?</div>
+     <div class="tile" style="background:var(--purple)"><b>3️⃣ Sources</b>Which sources must I use?</div></div>
+   <div class="tip">💡 <strong>Pro tip:</strong> The number of <em>parts</em> in a prompt often tells you how many <strong>body paragraphs</strong> to write!</div>`,
+   acts:[{id:"tap1", t:"tap", title:"Blueprint Check: Tap the key words", q:"Tap the 4 most important words or phrases in the prompt, then press Check.",
+     chunks:["Florida's manatees face serious challenges.","Write an essay that","explains","the challenges manatees face","and","how people are working to protect them.","Use information from","both sources","to support your response."], targets:[2,3,5,7],
+     ex:"The task is to EXPLAIN (expository). There are TWO parts: (1) the challenges manatees face, and (2) how people protect them. That means two body paragraphs! And you must use BOTH sources."}]},
+ { icon:"📚", color:"linear-gradient(135deg,#00b3a4,#1f6feb)", kick:"Lesson 3", title:"Read the Sources Like a Writer",
+   say:"Lesson 3. Read the sources like a writer. Now read both sources. As you read, think about the two parts of the prompt: the challenges manatees face, and how people protect them. Notice which source helps with each part. Good writers take notes on facts they might use. Press the speaker buttons to hear each source read aloud.",
+   html:`<p>Read both sources. Keep the <strong>two parts of the prompt</strong> in mind: 🅰️ the <strong>challenges</strong> manatees face and 🅱️ <strong>how people protect</strong> them.</p>
+   <div class="note">📝 <strong>Prompt:</strong> ${PROMPT}</div>
+   <div id="srcInline"></div>`,
+   acts:[{id:"m3a", t:"mc", title:"Source Check", q:"Which source would help you MOST with the part of the prompt about how people protect manatees?", c:["Source 1","Source 2","Neither source","Only the prompt"], a:1, ex:"Source 2, \"Lending a Hand to Manatees,\" explains manatee zones, rescues, and seagrass planting."},
+         {id:"m3b", t:"mc", q:"Which detail from Source 1 explains why winter is dangerous for manatees?", c:["Manatees can weigh more than 1,000 pounds.","Water colder than about 68 degrees Fahrenheit can make them sick.","The manatee became the state marine mammal in 1975.","Manatees are called sea cows."], a:1, ex:"Cold water is the danger in winter, which is why manatees crowd into warm springs."}]},
+ { icon:"🗺️", color:"linear-gradient(135deg,#7c4dff,#1f6feb)", kick:"Lesson 4", title:"Plan It: Central Idea + Organizer",
+   say:"Lesson 4. Plan it. Every strong expository essay has a central idea statement, also called a thesis. It tells the reader the main point of your whole essay and previews your body paragraphs. A strong central idea answers the prompt, covers all the parts, and does not give an opinion. Avoid announcing, like: In this essay I will tell you about. Next, sort your evidence into body paragraphs. Body paragraph 1 will explain the challenges. Body paragraph 2 will explain how people help. Your essay plan looks like this: Introduction, Body paragraph 1, Body paragraph 2, and Conclusion.",
+   html:`<p>Every strong expository essay has a <strong>central idea statement</strong> (also called a <em>thesis</em>). It tells the reader the main point of the whole essay and previews your body paragraphs.</p>
+   <div class="grid2"><div class="box" style="border-color:var(--green)">✅ <strong>Strong central idea:</strong><br>• answers the whole prompt<br>• previews the body paragraphs<br>• explains (no opinion)</div>
+     <div class="box" style="border-color:var(--red)">❌ <strong>Avoid:</strong><br>• "In this essay I will tell you…"<br>• opinions ("Manatees are the best!")<br>• only one detail</div></div>
+   <h3>🏢 Your essay blueprint</h3>
+   <div class="burger"><div style="background:var(--pink)">🏠 Introduction: hook + background + central idea</div><div style="background:var(--blue)">🧱 Body 1: Challenges manatees face</div><div style="background:var(--orange)">🧱 Body 2: How people protect them</div><div style="background:var(--purple)">🏁 Conclusion: restate + wrap up</div></div>`,
+   acts:[{id:"m4a", t:"mc", title:"Choose the Central Idea", q:"Which is the STRONGEST central idea statement for this prompt?",
+     c:["Manatees are the best animal in Florida, and everyone should love them.","In this essay, I will tell you about manatees.","Manatees face challenges such as cold water, hunger, and boat strikes, but people are working in many ways to protect them.","Manatees eat seagrass."], a:2, ex:"It answers BOTH parts of the prompt, previews the body paragraphs, and explains without giving an opinion."},
+         {id:"s2", t:"sort", title:"Sort the Evidence", q:"Which body paragraph does each piece of evidence belong in?", cats:[["1","🧱 Body 1: Challenges"],["2","🧱 Body 2: People Help"]],
+     items:[["Water colder than 68°F can make manatees sick. (Source 1)","1"],["Boaters must slow down in manatee zones. (Source 2)","2"],["Pollution caused seagrass to die. (Source 1)","1"],["The FWC rescues injured manatees. (Source 2)","2"],["Boat strikes are the leading human-related cause of death. (Source 1)","1"],["Groups are planting new seagrass. (Source 2)","2"]]}]},
+ { icon:"🏠", color:"linear-gradient(135deg,#ff4f8b,#ff7a00)", kick:"Lesson 5", title:"Build the Introduction",
+   say:"Lesson 5. Build the introduction. A strong introduction has three parts. First, a hook that grabs the reader's attention. You can use an interesting fact, a question, or a vivid description. Second, background information that gives the reader a little context about the topic. Third, the central idea statement, usually the last sentence. Look at the model introduction. The pink part is the hook. The teal part is background. The red part is the central idea. Now choose the strongest hook, then write your own introduction.",
+   html:`<p>A strong introduction has <strong>3 parts</strong>:</p>
+   <div class="grid3"><div class="tile" style="background:var(--c-hook)"><b>🎣 Hook</b>Grab attention: a fact, question, or vivid description</div>
+     <div class="tile" style="background:var(--c-bg)"><b>🌉 Background</b>Give a little context about the topic</div>
+     <div class="tile" style="background:var(--c-ci)"><b>🎯 Central Idea</b>Your main point (usually the last sentence)</div></div>
+   <h3>👀 Model introduction</h3><div class="box model">${segHTML(MODEL.intro)}</div>`,
+   acts:[{id:"m5a", t:"mc", title:"Pick the Best Hook", q:"Which hook would grab a reader's attention BEST?", c:["Hi, my essay is about manatees.","Manatees.","Imagine an animal as heavy as a grand piano gliding quietly through a Florida spring.","I am going to write about a sea animal."], a:2, ex:"A vivid description makes the reader picture the topic and want to keep reading. Avoid greetings and announcements."},
+         {id:"w_intro", t:"write", field:"intro", title:"✍️ Write YOUR introduction", min:25, q:"Write your own introduction: a hook, background, and your central idea statement. (You can change it later.)",
+          starters:["Imagine…","Did you know that…","The Florida manatee is…","However,","Manatees face challenges such as ___, but people are…"]}]},
+ { icon:"🧱", color:"linear-gradient(135deg,#1f6feb,#00b3a4)", kick:"Lesson 6", title:"Build Body Paragraphs (T-E-E-T)",
+   say:"Lesson 6. Build body paragraphs with T E E T. Each body paragraph is like one floor of your building. It needs four parts. T is the Topic sentence, which tells the main idea of the paragraph. E is Evidence, a fact or quote from a source. The next E is Elaborate, which means explain the evidence in your own words. Tell what it means and why it matters. You can repeat evidence and elaboration two or three times. The last T is Tie it up, a concluding sentence that wraps up the paragraph. Elaboration is the part most students skip, but it is what earns points in Development! Look at the color-coded model paragraph.",
+   html:`<p>Each body paragraph is one <strong>floor</strong> of your building. Use <strong>T-E-E-T</strong>:</p>
+   <div class="legend"><span style="background:var(--c-topic)">T: Topic sentence</span><span style="background:var(--c-ev)">E: Evidence from a source</span><span style="background:var(--c-el)">E: Elaborate (explain it!)</span><span style="background:var(--c-tie)">T: Tie it up</span></div>
+   <div class="tip">🔁 Repeat <strong>Evidence + Elaborate</strong> 2–3 times. ⭐ <strong>Elaboration</strong> is what most students skip, and it's what earns <strong>Development</strong> points!</div>
+   <div class="row between"><h3 style="margin:6px 0">👀 Model body paragraph</h3><button class="ghost" style="padding:3px 10px;font-size:.85rem" onclick="document.getElementById('mb1').classList.toggle('plain')">🎨 Colors on/off</button></div>
+   <div id="mb1"><div class="box model">${segHTML(MODEL.b1)}</div></div>`,
+   acts:[{id:"o1", t:"order", title:"Build the Floor: Put the paragraph in order", q:"Tap the sentences in the correct T-E-E-T order.",
+     items:["People help manatees in several important ways.","According to Source 2, many waterways have manatee zones where boaters must slow down.","This gives slow-moving manatees time to swim away, which helps keep them from getting hurt.","In addition, Source 2 explains that the FWC rescues sick and injured manatees and cares for them until they can return to the wild.","These actions show that people can make a real difference for manatees."],
+     ex:"Topic sentence → Evidence → Elaboration → more Evidence → Tie it up."},
+     {id:"m6a", t:"mc", q:"Which sentence is ELABORATION (explaining the evidence)?", c:["According to Source 1, manatees eat 10 to 15 percent of their body weight every day.","Manatees face several challenges.","This shows that losing seagrass is a huge problem, because manatees need enormous amounts of food to survive.","In conclusion, manatees need help."], a:2, ex:"Elaboration explains what the evidence MEANS and why it matters. Words like \"This shows\" and \"because\" are clues."}]},
+ { icon:"🔗", color:"linear-gradient(135deg,#ff7a00,#ffc400)", kick:"Lesson 7", title:"Use Evidence: Quote, Paraphrase & Cite",
+   say:"Lesson 7. Use evidence. There are two ways to use evidence from a source. A direct quote uses the author's exact words inside quotation marks. A paraphrase puts the idea in your own words, without quotation marks. Either way, you must cite the source, which means telling the reader where the information came from. Use phrases like: According to Source 1, Source 2 explains that, or The author of Source 1 states. Copying words without quotation marks is called plagiarism. Never do it!",
+   html:`<div class="grid2"><div class="box" style="border-color:var(--orange)"><strong>❝ Direct quote</strong><br>The author's <em>exact words</em> in quotation marks.<br><em>According to Source 1, "boat strikes are the leading human-related cause of manatee deaths."</em></div>
+     <div class="box" style="border-color:var(--teal)"><strong>🔄 Paraphrase</strong><br>The idea in <em>your own words</em>. No quotation marks.<br><em>Source 1 explains that boats injure and kill more manatees than any other human cause.</em></div></div>
+   <strong>🏷️ Citation starters:</strong>
+   <div class="chips"><span>According to Source 1,</span><span>Source 2 explains that</span><span>The author of Source 1 states,</span><span>As stated in "Lending a Hand to Manatees,"</span></div>
+   <div class="tip">🚫 Copying words <strong>without</strong> quotation marks is <strong>plagiarism</strong>. Always quote OR paraphrase, and always cite!</div>`,
+   acts:[{id:"m7a", t:"mc", title:"Paraphrase Power", q:"Source 1 says: \"Manatees do not have much fat to keep them warm, so water colder than about 68 degrees Fahrenheit can make them sick.\" Which is the BEST paraphrase?",
+     c:["Manatees do not have much fat to keep them warm, so water colder than about 68 degrees Fahrenheit can make them sick.","Since manatees have very little fat, water below about 68 degrees can cause them to get sick.","Manatees have lots of fat, so they love cold water.","Manatees are animals that live in water."], a:1, ex:"It keeps the same meaning in new words. The other choices copy the exact words with no quotation marks, change the meaning, or are too vague."},
+         {id:"m7b", t:"mc", q:"Which sentence correctly CITES a source?", c:["Boaters must slow down in manatee zones, which everybody knows.","According to Source 2, boaters must slow down in manatee zones.","I think boaters should probably slow down.","Boaters must slow down in manatee zones."], a:1, ex:"\"According to Source 2\" tells the reader exactly where the information came from."}]},
+ { icon:"🌉", color:"linear-gradient(135deg,#7c4dff,#ff4f8b)", kick:"Lesson 8", title:"Transitions: Connect the Floors",
+   say:"Lesson 8. Transitions connect the floors. Transitions are words and phrases that connect your ideas and guide the reader. Use them between sentences and between paragraphs. To add an idea, use: in addition, also, furthermore, another. To give an example, use: for example, for instance, such as. To show cause and effect, use: as a result, because, therefore, this means. To show contrast, use: however, on the other hand, although. To show order, use: first, next, finally. To conclude, use: in conclusion, overall, clearly. A score of 4 in Purpose and Structure needs varied transitions, so do not use the same one over and over!",
+   html:`<p><strong>Transitions</strong> connect your ideas and guide the reader, between sentences <em>and</em> between paragraphs.</p>
+   <table><tr><th>Purpose</th><th>Transitions</th></tr>
+   <tr><td>➕ Add an idea</td><td>In addition, Also, Furthermore, Another</td></tr>
+   <tr><td>💡 Give an example</td><td>For example, For instance, Such as</td></tr>
+   <tr><td>➡️ Cause &amp; effect</td><td>As a result, Because, Therefore, This means</td></tr>
+   <tr><td>↔️ Contrast</td><td>However, On the other hand, Although</td></tr>
+   <tr><td>🔢 Order</td><td>First, Next, Finally</td></tr>
+   <tr><td>🏁 Conclude</td><td>In conclusion, Overall, Clearly</td></tr></table>
+   <div class="tip">⭐ A <strong>4</strong> in Purpose/Structure needs <strong>varied</strong> transitions. Don't use "Also" five times!</div>`,
+   acts:[{id:"m8a", t:"mc", title:"Transition Challenge", q:"Manatees struggle in cold water. ______, they have trouble finding enough food.", c:["For example","In addition","However","In conclusion"], a:1, ex:"\"In addition\" ADDS a second challenge."},
+         {id:"m8b", t:"mc", q:"Many people help manatees. ______, volunteers plant new seagrass.", c:["For example","However","In conclusion","Although"], a:0, ex:"Planting seagrass is an EXAMPLE of people helping."},
+         {id:"m8c", t:"mc", q:"Boats are dangerous to manatees. ______, many waterways now have slow-speed zones.", c:["For instance","On the other hand","As a result","First"], a:2, ex:"The slow zones are an EFFECT of boats being dangerous."}]},
+ { icon:"🏁", color:"linear-gradient(135deg,#1f9d55,#00b3a4)", kick:"Lesson 9", title:"Build the Conclusion",
+   say:"Lesson 9. Build the conclusion. The conclusion is the roof that finishes your building. A strong conclusion does three things. First, it restates your central idea in new words. Second, it briefly sums up your main points. Third, it ends with a final thought that leaves the reader thinking. Do not add brand new information or evidence in the conclusion. Look at the model conclusion.",
+   html:`<div class="grid3"><div class="tile" style="background:var(--c-ci)"><b>🔁 Restate</b>Say your central idea in <em>new</em> words</div>
+     <div class="tile" style="background:var(--c-bg)"><b>📋 Sum up</b>Briefly review your main points</div>
+     <div class="tile" style="background:var(--c-hook)"><b>💭 Final thought</b>Leave the reader thinking</div></div>
+   <div class="tip">🚫 <strong>No new information</strong> in the conclusion!</div>
+   <h3>👀 Model conclusion</h3><div class="box model">${segHTML(MODEL.concl)}</div>`,
+   acts:[{id:"m9a", t:"mc", title:"Roof Inspection", q:"Which sentence does NOT belong in the conclusion?", c:["In conclusion, manatees face many dangers, but people are working to protect them.","Manatees can hold their breath for up to 20 minutes.","If we keep working together, manatees will have a brighter future.","Protecting manatees takes boaters, scientists, and volunteers."], a:1, ex:"That is a brand-new fact that has nothing to do with the central idea. New information doesn't belong in a conclusion."}]},
+ { icon:"🎩", color:"linear-gradient(135deg,#0f2a5c,#7c4dff)", kick:"Lesson 10", title:"Language: Sound Like an Expert",
+   say:"Lesson 10. Language: sound like an expert. Expository essays use a formal, academic tone. Use precise academic vocabulary, like threat, environment, protect, survive, and significant. Avoid slang like super, totally, or gonna. Avoid I think and I believe, because expository writing explains facts, not opinions. Avoid you and your. Vary your sentences: mix short and long sentences, and start them in different ways. Finally, check your capitalization, punctuation, spelling, and grammar.",
+   html:`<div class="grid2"><div class="box" style="border-color:var(--green)">✅ <strong>Do:</strong><br>• Use academic words: <em>threat, environment, protect, survive, significant</em><br>• Mix short and long sentences<br>• Start sentences in different ways<br>• Check spelling, capitals &amp; punctuation</div>
+     <div class="box" style="border-color:var(--red)">❌ <strong>Avoid:</strong><br>• Slang: <em>super, totally, gonna, stuff</em><br>• "I think…" / "I believe…"<br>• "you" and "your"<br>• Run-on sentences</div></div>`,
+   acts:[{id:"m10a", t:"mc", title:"Tone Makeover", q:"Which revision sounds the MOST formal and academic? Original: \"Boats are super bad for manatees and it's totally sad.\"", c:["Boats are really, really bad for manatees.","Boat strikes are a serious threat to manatees and can cause deadly injuries.","I think boats are bad for manatees, you know?","Boats = bad for manatees!!!"], a:1, ex:"It uses precise words (serious threat, deadly injuries) and a formal tone with no slang or opinion."},
+         {id:"m10b", t:"mc", q:"Which sentence uses the most precise academic vocabulary?", c:["Manatees need stuff to eat.","Manatees eat a lot of things.","Manatees depend on seagrass to survive.","Manatees like to eat plants and things."], a:2, ex:"\"Depend\" and \"survive\" are precise academic words; \"stuff\" and \"things\" are vague."}]},
+ { icon:"📏", color:"linear-gradient(135deg,#ffc400,#ff7a00)", kick:"Lesson 11", title:"The 12-Point Rubric",
+   say:"Lesson 11. The 12 point rubric. Your essay is scored in three areas, each worth 4 points, for a total of 12. Purpose and Structure: your central idea is clear and stays on topic, your essay is well organized with an introduction and conclusion, and you use varied transitions. Development: you show you understand the topic, you use relevant evidence from multiple sources, you elaborate well, and you cite your evidence. Language: you use academic vocabulary, varied sentences, a formal tone, and correct grammar, spelling, capitalization, and punctuation.",
+   html:`<table><tr><th>Area (4 pts each)</th><th>What a 4 looks like (student-friendly)</th></tr>
+   <tr><td><strong>🎯 Purpose / Structure</strong></td><td>Clear central idea that stays on topic · logical organization · <strong>varied transitions</strong> · strong introduction &amp; conclusion</td></tr>
+   <tr><td><strong>🧱 Development</strong></td><td>Shows you understand the topic · <strong>relevant evidence from multiple sources</strong>, smoothly included · strong <strong>elaboration</strong> · evidence is <strong>cited</strong></td></tr>
+   <tr><td><strong>🎩 Language</strong></td><td>Academic vocabulary · varied sentences · formal tone · correct grammar, spelling, capitals &amp; punctuation</td></tr></table>
+   <div class="note">🧮 Total: <strong>12 points</strong> (4 + 4 + 4)</div>`,
+   acts:[{id:"m11a", t:"mc", title:"Be the Scorer", q:"Jordan's essay is organized and has a clear central idea, but it never uses any facts from the sources. Which area needs the MOST work?", c:["Purpose/Structure","Development","Language","None. It's perfect."], a:1, ex:"Development is about evidence and elaboration. Without facts from the sources, Development will score low."},
+         {id:"m11b", t:"mc", q:"Ava's essay has strong evidence and organization, but it is full of slang like \"gonna\" and has many spelling mistakes. Which area needs the most work?", c:["Purpose/Structure","Development","Language","Sources"], a:2, ex:"Tone, vocabulary, and conventions such as spelling are all part of Language."}]},
+ { icon:"✍️", color:"linear-gradient(135deg,#ff4f8b,#7c4dff)", kick:"Lesson 12", title:"Build Your Essay!", write:true,
+   say:"Lesson 12. Build your essay! Now it is your turn to be the architect. Use your plan to write a full expository essay that answers the prompt. Write your introduction, two body paragraphs using T E E T, and a conclusion. The sources are on the screen to help you. Check off the rubric checklist as you go. Press Read my essay to hear your writing and catch mistakes. Your work saves automatically.",
+   html:"" }
+];
+function segHTML(arr){ return arr.map(s => `<span class="${SEGCLS[s[0]]}">${esc(s[1])}</span>`).join(""); }
+
+/* ===================== STATE ===================== */
+let state = null;
+function fresh(n){ return {name:n, li:0, ans:{}, sortA:{}, tapSel:{}, ordSel:{}, essay:{title:"",intro:"",b1:"",b2:"",concl:""}, checks:{}, started:Date.now(), finished:null}; }
+function skey(n){ return STORE + n.trim().toLowerCase(); }
+function save(){ if(!state) return; try{ localStorage.setItem(skey(state.name), JSON.stringify(state)); localStorage.setItem(STORE+"last", state.name); }catch(e){} }
+function loadFor(n){ try{ const s = localStorage.getItem(skey(n)); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+function lastName(){ try{ return localStorage.getItem(STORE+"last") || ""; }catch(e){ return ""; } }
+
+/* ===================== SPEECH ===================== */
+let voiceMode = "female", rate = 0.95, flip = false, token = 0;
+const FEM = [/google us english/i,/samantha/i,/\bava\b/i,/allison/i,/susan/i,/aria/i,/jenny/i,/michelle/i,/zira/i,/nicky/i,/female/i];
+const MAL = [/aaron/i,/\bguy\b/i,/christopher/i,/\beric\b/i,/david/i,/\bmark\b/i,/\bevan\b/i,/\btom\b/i,/fred/i,/\balex\b/i,/\bmale\b/i];
+function usVoices(){ try{ return speechSynthesis.getVoices().filter(v => /^en[-_]US/i.test(v.lang)); }catch(e){ return []; } }
+function pick(list){ const vs = usVoices(); for(const re of list){ const v = vs.find(x => re.test(x.name)); if(v) return v; } return null; }
+function chooseVoice(){ let m = voiceMode; if(m === "mixed"){ flip = !flip; m = flip ? "female" : "male"; }
+  const vs = usVoices();
+  if(m === "male") return pick(MAL) || vs.find(v => !FEM.some(r => r.test(v.name))) || pick(FEM) || vs[0] || null;
+  return pick(FEM) || vs[0] || null; }
+function cleanSpeech(t){ return String(t).replace(/ELA\.[A-Z0-9.]+/g,"").replace(/[“”"]/g,"").replace(/_{2,}/g," blank ").replace(/°F/g," degrees").replace(/T-E-E-T/g,"T E E T").replace(/—|–/g,", ").replace(/\s+/g," ").trim(); }
+function chunk(t){ return (t.match(/[^.!?]+[.!?]+["')]*|[^.!?]+$/g) || [t]).map(s => s.trim()).filter(Boolean); }
+function setSpeaking(on){ document.getElementById("stopBtn").classList.toggle("show", on); }
+function clearHL(){ document.querySelectorAll(".para.reading").forEach(e => e.classList.remove("reading")); }
+function stopSpeech(){ token++; try{ speechSynthesis.cancel(); }catch(e){} setSpeaking(false); clearHL(); }
+function speak(items){
+  if(typeof items === "string") items = [{text:items}];
+  if(!("speechSynthesis" in window)){ alert("Read aloud is not available on this browser."); return; }
+  stopSpeech();
+  const my = ++token, voice = chooseVoice(), queue = [];
+  items.forEach(it => chunk(cleanSpeech(it.text)).forEach((c,j) => queue.push({c, el: j===0 ? (it.el||null) : undefined})));
+  let k = 0;
+  const next = () => { if(my !== token) return;
+    if(k >= queue.length){ setSpeaking(false); clearHL(); return; }
+    const q = queue[k++], u = new SpeechSynthesisUtterance(q.c);
+    if(voice){ u.voice = voice; u.lang = voice.lang; } else u.lang = "en-US";
+    u.rate = rate;
+    u.onstart = () => { if(q.el !== undefined){ clearHL(); if(q.el){ q.el.classList.add("reading"); q.el.scrollIntoView({block:"nearest",behavior:"smooth"}); } } };
+    u.onend = next; u.onerror = next; speechSynthesis.speak(u); };
+  setSpeaking(true); setTimeout(next, 80);
+}
+try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; }catch(e){}
+document.getElementById("voiceSeg").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return;
+  voiceMode = b.dataset.v; flip = false; document.querySelectorAll("#voiceSeg button").forEach(x => x.classList.toggle("on", x === b));
+  try{ localStorage.setItem(STORE+"voice", voiceMode); }catch(e){} });
+document.getElementById("rateSeg").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return;
+  rate = parseFloat(b.dataset.r); document.querySelectorAll("#rateSeg button").forEach(x => x.classList.toggle("on", x === b)); });
+try{ const v = localStorage.getItem(STORE+"voice"); if(v){ voiceMode = v; document.querySelectorAll("#voiceSeg button").forEach(x => x.classList.toggle("on", x.dataset.v === v)); } }catch(e){}
+
+/* ===================== HELPERS ===================== */
+const app = document.getElementById("app");
+const L = "ABCD";
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function pop(t){ const d = document.createElement("div"); d.className = "pop"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1200); }
+function keepScroll(fn){ const y = window.scrollY; fn(); window.scrollTo(0,y); }
+function words(t){ return String(t || "").trim().split(/\s+/).filter(Boolean).length; }
+const COLORS = ["#1f6feb","#ff7a00","#00b3a4","#7c4dff","#ff4f8b","#1f6feb","#ffc400","#7c4dff","#1f9d55","#0f2a5c","#ff7a00","#ff4f8b"];
+function actDone(a){
+  if(a.t === "mc" || a.t === "tap" || a.t === "order") return !!state.ans[a.id];
+  if(a.t === "sort") return a.items.every((_,k) => state.sortA[a.id + "_" + k]);
+  if(a.t === "write") return words(state.essay[a.field]) >= a.min;
+  return true; }
+function lessonDone(i){ const l = LESSONS[i]; if(l.write) return !!state.finished; return (l.acts || []).every(actDone); }
+function skylineHTML(){
+  return `<div class="skyline noprint">${LESSONS.map((l,i) => { const d = lessonDone(i), h = d ? 40 + ((i*37)%30) : 26;
+    return `<button class="bld ${d ? "done" : "todo"} ${i === state.li ? "cur" : ""}" style="height:${h}px;${d ? "background:" + COLORS[i] : ""}" onclick="goL(${i})" title="${esc(l.title)}"><span>${i+1}</span></button>`; }).join("")}</div>`;
+}
+function goL(i){ state.li = i; save(); render(); window.scrollTo(0,0); }
+function scoreables(){ const out = []; LESSONS.forEach(l => (l.acts || []).forEach(a => {
+  if(a.t === "sort") a.items.forEach((it,k) => out.push(state.sortA[a.id+"_"+k] ? state.sortA[a.id+"_"+k] === it[1] : null));
+  else if(a.t !== "write") out.push(state.ans[a.id] ? state.ans[a.id].ok : null); })); return out; }
+
+/* ===================== SOURCES ===================== */
+function sourceHTML(si, idp){
+  const s = SOURCES[si];
+  return `<div class="src"><span class="slab">${s.label}</span><div class="row between"><div class="stitle">${esc(s.title)}</div>
+    <button class="speak sm" onclick="readSource(${si},'${idp}')">🔊 Read ${s.label}</button></div>
+    ${s.p.map((t,i) => `<div class="para" id="${idp}${si}-${i}"><span class="num">${i+1}</span><p>${esc(t)}</p></div>`).join("")}</div>`;
+}
+function readSource(si, idp){ const s = SOURCES[si]; const items = [{text:s.label + ". " + s.title + "."}];
+  s.p.forEach((t,i) => items.push({text:t, el:document.getElementById(idp + si + "-" + i)})); speak(items); }
+let srcTab = 0;
+function openSources(){
+  if(!state) return;
+  const draw = () => { document.getElementById("modalRoot").innerHTML = `<div class="modal" onclick="if(event.target===this){this.remove();stopSpeech()}"><div class="card">
+    <div class="row between"><h2 style="margin:0">📚 Sources</h2><button class="big" onclick="document.querySelector('.modal').remove();stopSpeech()">Close</button></div>
+    <div class="note" style="margin:8px 0">📝 <strong>Prompt:</strong> ${PROMPT}</div>
+    <div class="stabs">${SOURCES.map((s,i) => `<button class="${i === srcTab ? "on" : ""}" onclick="srcTab=${i};openSources()">${s.label}</button>`).join("")}</div>
+    ${sourceHTML(srcTab,"m")}</div></div>`; };
+  stopSpeech(); draw();
+}
+
+/* ===================== RENDER ===================== */
+function render(){
+  stopSpeech();
+  if(!state) return renderStart();
+  if(state.li === "report") return renderReport();
+  const l = LESSONS[state.li];
+  if(l.write) return renderWrite();
+  renderLesson();
+}
+function renderStart(){
+  app.innerHTML = `<div class="card center" style="text-align:center">
+    <div style="font-size:3.4rem">🏗️📝</div>
+    <h2 style="font-size:2.3rem">Essay Architect</h2>
+    <p style="font-size:1.1rem">Learn to build a strong <strong>expository essay</strong> for the Florida B.E.S.T. Writing test, one piece at a time, from blueprint to rooftop!</p>
+    <div class="row" style="justify-content:center"><input type="text" id="nm" style="max-width:360px" placeholder="First name and last initial" value="${esc(lastName())}" autocomplete="off">
+      <button class="big y" onclick="startWith()">🔨 Start Building</button></div>
+    <div class="tip" style="text-align:left">🏢 <strong>12 lessons</strong> with practice after each, then you write your own essay about <strong>Florida manatees</strong> using two sources.<br>
+    🔊 Press any speaker button to hear it read aloud. Your work saves automatically. Plan about two class periods.</div>
+    <button class="speak" onclick="speak('Essay Architect. Learn to build a strong expository essay for the Florida B.E.S.T. Writing test, one piece at a time. There are 12 lessons with practice after each, and then you will write your own essay about Florida manatees using two sources. Type your name and press Start Building.')">🔊 Read to me</button>
+  </div>`;
+  document.getElementById("nm").addEventListener("keydown", e => { if(e.key === "Enter") startWith(); });
+}
+function startWith(){ const n = document.getElementById("nm").value.trim(); if(n.length < 2){ speak("Please type your name first."); return; }
+  state = loadFor(n) || fresh(n); save(); render(); }
+
+function renderLesson(){
+  const i = state.li, l = LESSONS[i], done = lessonDone(i);
+  app.innerHTML = skylineHTML() + `<div class="card center">
+    <div class="lhead" style="background:${l.color}"><div class="ic">${l.icon}</div><div><div class="kick">${l.kick} of ${LESSONS.length}</div><div class="tt">${esc(l.title)}</div></div></div>
+    <div class="row between"><span></span><button class="speak" onclick="speak(LESSONS[${i}].say)">🔊 Read this lesson to me</button></div>
+    ${l.html}
+    ${(l.acts || []).map((a,k) => `<div class="act" id="act-${a.id}">${actHTML(a,i,k)}</div>`).join("")}
+    ${done ? "" : `<p class="muted" style="font-size:.9rem;margin-top:12px">🔒 Finish the practice above to unlock the next lesson.</p>`}
+    <div class="nav"><button class="ghost" onclick="goL(${i-1})" ${i === 0 ? "disabled" : ""}>⬅ Back</button>
+      <button class="big ${i === LESSONS.length-2 ? "y" : ""}" onclick="goL(${i+1})" ${done ? "" : "disabled"}>${i === LESSONS.length-2 ? "🏗️ Build my essay" : "Next lesson ➜"}</button></div>
+  </div>`;
+  if(i === 2) document.getElementById("srcInline").innerHTML = sourceHTML(0,"i") + sourceHTML(1,"i");
+}
+
+/* ---------- ACTIVITIES ---------- */
+function actHTML(a, li, k){
+  const head = a.title ? `<div class="atitle">🛠️ ${esc(a.title)}</div>` : "";
+  const read = `<button class="speak sm" onclick="readAct(${li},${k})">🔊 Read</button>`;
+  if(a.t === "mc"){
+    const d = state.ans[a.id], sel = d ? d.sel : state.ans["p_" + a.id];
+    return `${head}<div class="row between"><p class="stem">${esc(a.q)}</p>${read}</div>
+      <div class="choices">${a.c.map((c,j) => { let cls = "choice"; if(d){ if(j === a.a) cls += " isright"; else if(j === sel) cls += " iswrong"; } else if(j === sel) cls += " sel";
+        return `<button class="${cls}" ${d ? "disabled" : ""} onclick="mcPick('${a.id}',${j})"><span class="let">${L[j]}</span><span>${esc(c)}</span></button>`; }).join("")}</div>
+      ${d ? fb(d.ok, d.ok ? a.ex : `The answer was <strong>${L[a.a]}</strong>. ${esc(a.ex)}`, li, k) : `<button class="big o" onclick="mcLock(${li},${k})" ${sel === undefined ? "disabled" : ""}>🔒 Lock In</button>`}`;
+  }
+  if(a.t === "sort"){
+    return `${head}<div class="row between"><p class="stem">${esc(a.q)}</p>${read}</div>` + a.items.map((it,j) => { const r = state.sortA[a.id+"_"+j];
+      const lab = c => a.cats.find(x => x[0] === c)[1];
+      return `<div class="sortrow ${r ? (r === it[1] ? "ok" : "no") : ""}"><span style="flex:1;min-width:200px"><strong>${esc(it[0])}</strong></span>
+        ${r ? `<span style="font-weight:900">${r === it[1] ? "✅" : "❌"} ${esc(lab(it[1]))}</span>`
+            : `<span class="row" style="gap:6px"><button class="speak sm" onclick="speak(${JSON.stringify(it[0]).replace(/"/g,"&quot;")})">🔊</button>${a.cats.map(c => `<button class="pill" onclick="sortPick(${li},${k},${j},'${c[0]}')">${esc(c[1])}</button>`).join("")}</span>`}</div>`; }).join("");
+  }
+  if(a.t === "tap"){
+    const d = state.ans[a.id], sel = d ? d.sel : (state.tapSel[a.id] || []);
+    return `${head}<div class="row between"><p class="stem">${esc(a.q)}</p>${read}</div>
+      <div class="taps ${d ? "locked" : ""}">${a.chunks.map((c,j) => { let cls = "tk";
+        if(d){ if(a.targets.includes(j)) cls += sel.includes(j) ? " hit" : " miss"; else if(sel.includes(j)) cls += " extra"; }
+        else if(sel.includes(j)) cls += " on";
+        return `<span class="${cls}" onclick="tapPick(${li},${k},${j})">${esc(c)}</span>`; }).join(" ")}</div>
+      ${d ? fb(d.ok, (d.ok ? "You found all the key words! " : "Green boxes show the key words. ") + esc(a.ex), li, k) : `<div style="margin-top:10px"><button class="big o" onclick="tapCheck(${li},${k})" ${sel.length ? "" : "disabled"}>✔ Check (${sel.length} selected)</button></div>`}`;
+  }
+  if(a.t === "order"){
+    const d = state.ans[a.id], sel = d ? d.sel : (state.ordSel[a.id] || []);
+    const order = shuffledIdx(a);
+    return `${head}<div class="row between"><p class="stem">${esc(a.q)}</p>${read}</div>
+      <div class="ordlist">${order.map(j => { const pos = sel.indexOf(j); let cls = "ord";
+        if(d) cls += pos === j ? " ok" : " no"; else if(pos >= 0) cls += " picked";
+        return `<button class="${cls}" ${d ? "disabled" : ""} onclick="ordPick(${li},${k},${j})"><span class="n">${pos >= 0 ? pos+1 : "?"}</span><span>${esc(a.items[j])}</span></button>`; }).join("")}</div>
+      ${d ? fb(d.ok, (d.ok ? "" : "Correct order: " + a.items.map((t,x) => (x+1) + ". " + t).join(" ") + " ") + esc(a.ex), li, k)
+          : `<div class="row"><button class="ghost" onclick="ordReset(${li},${k})">↺ Start over</button><button class="big o" onclick="ordCheck(${li},${k})" ${sel.length === a.items.length ? "" : "disabled"}>✔ Check order</button></div>`}`;
+  }
+  if(a.t === "write"){
+    const v = state.essay[a.field] || "", w = words(v);
+    return `${head}<p class="stem">${esc(a.q)}</p>
+      <div class="chips">${a.starters.map(s => `<button onclick="insertInto('w-${a.id}','${s.replace(/'/g,"\\'")}')">+ ${esc(s)}</button>`).join("")}</div>
+      <textarea id="w-${a.id}" placeholder="Start writing here…" oninput="state.essay['${a.field}']=this.value;save();wcUpd('${a.id}',${a.min})">${esc(v)}</textarea>
+      <div class="row between"><span class="wc" id="wc-${a.id}">${w} words${w < a.min ? " · write at least " + a.min + " words" : " ✔"}</span>
+      <button class="speak sm" onclick="speak(state.essay['${a.field}'] || 'You have not written anything yet.')">🔊 Read my writing</button></div>`;
+  }
+  return "";
+}
+function fb(ok, msg, li, k){ return `<div class="fb ${ok ? "good" : "bad"}"><strong>${ok ? "✅ Correct!" : "❌ Not quite."}</strong> <span>${msg}</span>
+  <div><button class="speak sm" style="margin-top:6px" onclick="readFB(${li},${k})">🔊 Read explanation</button></div></div>`; }
+function readFB(li,k){ const a = LESSONS[li].acts[k], d = state.ans[a.id]; let t = (d && d.ok ? "Correct! " : "Not quite. ");
+  if(a.t === "mc" && !d.ok) t += "The answer was " + L[a.a] + ". " + a.c[a.a] + ". ";
+  if(a.t === "order" && !d.ok) t += "The correct order is: " + a.items.join(" ") + " ";
+  speak(t + a.ex); }
+function readAct(li,k){ const a = LESSONS[li].acts[k]; let t = a.q + " ";
+  if(a.t === "mc") a.c.forEach((c,j) => t += " Choice " + L[j] + ". " + c + (/[.!?"]$/.test(c) ? " " : ". "));
+  if(a.t === "sort") a.items.forEach(it => t += " " + it[0]);
+  if(a.t === "tap") t += " The prompt says: " + a.chunks.join(" ");
+  if(a.t === "order") shuffledIdx(a).forEach(j => t += " " + a.items[j]);
+  speak(t); }
+function relesson(){ keepScroll(renderLesson); }
+function mcPick(id,j){ if(state.ans[id]) return; state.ans["p_"+id] = j; save(); relesson(); }
+function mcLock(li,k){ const a = LESSONS[li].acts[k], sel = state.ans["p_"+a.id]; if(sel === undefined) return;
+  const ok = sel === a.a; state.ans[a.id] = {sel, ok}; delete state.ans["p_"+a.id]; save(); if(ok) pop("🏗️ +1 Brick!"); relesson(); }
+function sortPick(li,k,j,c){ const a = LESSONS[li].acts[k], key = a.id + "_" + j; if(state.sortA[key]) return;
+  state.sortA[key] = c; save(); const ok = c === a.items[j][1]; if(ok) pop("✅"); relesson();
+  speak((ok ? "Correct! " : "Not quite. ") + "This one is " + a.cats.find(x => x[0] === a.items[j][1])[1].replace(/[^\w\s:]/g,"") + "."); }
+function tapPick(li,k,j){ const a = LESSONS[li].acts[k]; if(state.ans[a.id]) return; const s = state.tapSel[a.id] || [];
+  state.tapSel[a.id] = s.includes(j) ? s.filter(x => x !== j) : [...s, j]; save(); relesson(); }
+function tapCheck(li,k){ const a = LESSONS[li].acts[k], s = state.tapSel[a.id] || [];
+  const ok = a.targets.every(t => s.includes(t)) && s.filter(x => !a.targets.includes(x)).length <= 1;
+  state.ans[a.id] = {sel:s, ok}; save(); if(ok) pop("🔍 Blueprint read!"); relesson(); }
+function shuffledIdx(a){ const idx = a.items.map((_,j) => j); let seed = a.id.length * 97 + 13; const rnd = () => (seed = (seed*9301 + 49297) % 233280) / 233280;
+  for(let k = idx.length-1; k > 0; k--){ const r = Math.floor(rnd()*(k+1)); [idx[k],idx[r]] = [idx[r],idx[k]]; } return idx; }
+function ordPick(li,k,j){ const a = LESSONS[li].acts[k]; if(state.ans[a.id]) return; const s = state.ordSel[a.id] || [];
+  if(s.includes(j)) state.ordSel[a.id] = s.slice(0, s.indexOf(j)); else state.ordSel[a.id] = [...s, j]; save(); relesson(); }
+function ordReset(li,k){ state.ordSel[LESSONS[li].acts[k].id] = []; save(); relesson(); }
+function ordCheck(li,k){ const a = LESSONS[li].acts[k], s = state.ordSel[a.id] || []; if(s.length !== a.items.length) return;
+  const ok = s.every((x,i) => x === i); state.ans[a.id] = {sel:s, ok}; save(); if(ok) pop("🧱 Floor built!"); relesson(); }
+function insertInto(id, txt){ const t = document.getElementById(id); const s = t.selectionStart ?? t.value.length;
+  const add = (s > 0 && !/\s$/.test(t.value.slice(0,s)) ? " " : "") + txt + " "; t.value = t.value.slice(0,s) + add + t.value.slice(s);
+  t.dispatchEvent(new Event("input")); t.focus(); t.selectionStart = t.selectionEnd = s + add.length; }
+function wcUpd(id,min){ const t = document.getElementById("w-"+id), w = words(t.value), el = document.getElementById("wc-"+id);
+  el.textContent = w + " words" + (w < min ? " · write at least " + min + " words" : " ✔");
+  const li = state.li; const btn = document.querySelector(".nav .big"); if(btn) btn.disabled = !lessonDone(li); }
+
+/* ---------- WRITE ---------- */
+const PARTS = [
+ {f:"intro", icon:"🏠", name:"Introduction", color:"var(--c-hook)", need:["Hook that grabs attention","Background about manatees","Central idea statement (both parts of the prompt)"], st:["Imagine…","Did you know that…","However,","Manatees face challenges such as ___, but people are…"]},
+ {f:"b1", icon:"🧱", name:"Body Paragraph 1: Challenges", color:"var(--c-topic)", need:["T: Topic sentence about the challenges","E: Evidence from Source 1 (cite it!)","E: Elaborate (explain what it means)","Repeat E + E for 2–3 challenges","T: Tie it up"], st:["Manatees face several challenges.","One challenge is","According to Source 1,","This means that","Another challenge is","Finally,","Clearly,"]},
+ {f:"b2", icon:"🧱", name:"Body Paragraph 2: How People Help", color:"var(--c-ev)", need:["T: Topic sentence about how people help","E: Evidence from Source 2 (cite it!)","E: Elaborate","Repeat E + E for 2–3 ways","T: Tie it up"], st:["Fortunately, people are","First,","Source 2 explains that","As a result,","In addition,","This shows that","These efforts"]},
+ {f:"concl", icon:"🏁", name:"Conclusion", color:"var(--purple)", need:["Restate your central idea in new words","Sum up main points","Final thought (no new information!)"], st:["In conclusion,","Overall,","If Floridians continue to…","These gentle giants"]}
+];
+const CHECKLIST = ["My central idea answers BOTH parts of the prompt.","I have an introduction, two body paragraphs, and a conclusion.","I used varied transitions.","I used evidence from BOTH sources.","I cited my sources (According to Source 1…).","I elaborated (explained) every piece of evidence.","I used a formal tone (no slang, no \"I think\").","I checked spelling, capitals, and punctuation."];
+function essayText(){ const e = state.essay; return [e.title, e.intro, e.b1, e.b2, e.concl].filter(x => x && x.trim()).join("\n\n"); }
+function renderWrite(){
+  const e = state.essay, total = words(e.intro) + words(e.b1) + words(e.b2) + words(e.concl);
+  app.innerHTML = skylineHTML() + `<div class="wwrap">
+   <section class="card">
+    <div class="lhead" style="background:${LESSONS[11].color}"><div class="ic">✍️</div><div><div class="kick">Lesson 12 of 12</div><div class="tt">Build Your Essay!</div></div></div>
+    <div class="row between"><span></span><button class="speak" onclick="speak(LESSONS[11].say + ' The prompt is: ' + PROMPT)">🔊 Read directions</button></div>
+    <div class="note"><strong>📝 Prompt:</strong> ${PROMPT}</div>
+    <label style="font-weight:900">🏷️ Title (optional)</label>
+    <input type="text" value="${esc(e.title)}" placeholder="Give your essay a title" oninput="state.essay.title=this.value;save()">
+    ${PARTS.map(p => `<div class="wpart" style="border-color:${p.color}">
+      <div class="wl" style="color:${p.color}">${p.icon} ${p.name}</div>
+      <ul>${p.need.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
+      <div class="chips">${p.st.map(s => `<button onclick="insertInto('e-${p.f}','${s.replace(/'/g,"\\'")}')">+ ${esc(s)}</button>`).join("")}</div>
+      <textarea id="e-${p.f}" placeholder="Write your ${p.name.split(":")[0].toLowerCase()} here…" oninput="state.essay['${p.f}']=this.value;save();totUpd()">${esc(e[p.f])}</textarea>
+      <div class="row between"><span class="wc" id="pw-${p.f}">${words(e[p.f])} words</span><button class="speak sm" onclick="speak(state.essay['${p.f}'] || 'Nothing written yet.')">🔊 Read this part</button></div></div>`).join("")}
+    <div class="row between noprint"><span class="wc" id="tot" style="font-size:1rem">📏 Total: ${total} words${total < 250 ? " · aim for 250–450 words" : " ✔"}</span>
+      <div class="row"><button class="speak" onclick="speak(essayText() || 'Nothing written yet.')">🔊 Read my whole essay</button><button class="ghost" onclick="showModel()">👀 Peek at the model essay</button></div></div>
+    <div class="nav noprint"><button class="ghost" onclick="goL(10)">⬅ Rubric</button><button class="big g" onclick="finishEssay()" id="finBtn">🏆 I'm finished!</button></div>
+   </section>
+   <aside class="spanel noprint">
+    <div class="card" style="margin-bottom:14px"><h3 style="margin-top:0">✅ Rubric Checklist</h3>
+      ${CHECKLIST.map((c,k) => `<label class="check"><input type="checkbox" ${state.checks[k] ? "checked" : ""} onchange="state.checks[${k}]=this.checked;save()">${esc(c)}</label>`).join("")}</div>
+    <div class="card"><h3 style="margin-top:0">📚 Sources</h3>
+      <div class="stabs">${SOURCES.map((s,i) => `<button class="${i === srcTab ? "on" : ""}" onclick="srcTab=${i};keepScroll(renderWrite)">${s.label}</button>`).join("")}</div>
+      ${sourceHTML(srcTab,"w")}</div>
+   </aside></div>`;
+}
+function totUpd(){ const e = state.essay; PARTS.forEach(p => { const el = document.getElementById("pw-"+p.f); if(el) el.textContent = words(e[p.f]) + " words"; });
+  const t = words(e.intro) + words(e.b1) + words(e.b2) + words(e.concl); document.getElementById("tot").textContent = "📏 Total: " + t + " words" + (t < 250 ? " · aim for 250–450 words" : " ✔"); }
+function showModel(){
+  document.getElementById("modalRoot").innerHTML = `<div class="modal" onclick="if(event.target===this){this.remove();stopSpeech()}"><div class="card">
+    <div class="row between"><h2 style="margin:0">👀 Model Essay</h2><div class="row"><button class="speak" onclick="speak(modelText())">🔊 Read</button><button class="big" onclick="document.querySelector('.modal').remove();stopSpeech()">Close</button></div></div>
+    <p class="muted">Use the model to check your structure. <strong>Don't copy it</strong>. Your essay should be in your own words!</p>
+    <div class="legend"><span style="background:var(--c-hook)">Hook / Final thought</span><span style="background:var(--c-bg)">Background / Summary</span><span style="background:var(--c-ci)">Central idea</span><span style="background:var(--c-topic)">Topic sentence</span><span style="background:var(--c-ev)">Evidence</span><span style="background:var(--c-el)">Elaboration</span><span style="background:var(--c-tie)">Tie it up</span></div>
+    <h3 style="text-align:center">${esc(MODEL.title)}</h3>
+    ${["intro","b1","b2","concl"].map(k => `<p class="model">${segHTML(MODEL[k])}</p>`).join("")}</div></div>`;
+}
+function modelText(){ return MODEL.title + ". " + ["intro","b1","b2","concl"].map(k => MODEL[k].map(s => s[1]).join("")).join(" "); }
+function finishEssay(){ const t = words(state.essay.intro) + words(state.essay.b1) + words(state.essay.b2) + words(state.essay.concl);
+  if(t < 100 && !confirm("Your essay is only " + t + " words. Strong essays are usually 250 to 450 words. Finish anyway?")) return;
+  state.finished = state.finished || Date.now(); state.li = "report"; save(); render(); window.scrollTo(0,0); }
+
+/* ---------- REPORT ---------- */
+function renderReport(){
+  const sc = scoreables(), right = sc.filter(x => x === true).length, total = sc.length;
+  const e = state.essay, tw = words(e.intro) + words(e.b1) + words(e.b2) + words(e.concl);
+  const checked = CHECKLIST.filter((_,k) => state.checks[k]).length;
+  const cites = (essayText().match(/source\s*[12]|according to|explains that|states/gi) || []).length;
+  const trans = (essayText().match(/\b(in addition|for example|for instance|as a result|however|first|next|finally|therefore|in conclusion|overall|another|also|furthermore|this means|because|clearly)\b/gi) || []).length;
+  app.innerHTML = `<div class="card center" style="text-align:center">
+    <div style="font-size:4rem;line-height:1">🏙️</div><h2>Building Complete, ${esc(state.name)}!</h2>
+    <p>You built a whole expository essay from the blueprint to the roof!</p>
+    <div class="row" style="justify-content:center;font-weight:900;font-size:1.05rem">
+      <span class="tile" style="background:var(--blue)">🧱 Practice: ${right}/${total}</span>
+      <span class="tile" style="background:var(--orange)">📏 ${tw} words</span>
+      <span class="tile" style="background:var(--green)">✅ Checklist ${checked}/${CHECKLIST.length}</span></div>
+    <div class="tip" style="text-align:left"><strong>👩‍🏫 Show your teacher this screen.</strong><br>
+      Skill: Expository Writing (ELA.6.C.1.4) · Practice: ${right}/${total} (${Math.round(right/total*100)}%)<br>
+      Essay: ${tw} words · Citation phrases found: ${cites} · Transitions found: ${trans}<br>
+      Finished: ${esc(new Date(state.finished).toLocaleString())}</div>
+    <div class="row noprint" style="justify-content:center">
+      <button class="speak" onclick="speak(essayText() || 'No essay yet.')">🔊 Read my essay</button>
+      <button class="ghost" onclick="copyEssay()">📋 Copy my essay</button><button class="ghost" onclick="window.print()">🖨️ Print</button>
+      <button class="ghost" onclick="goL(11)">✏️ Keep editing</button></div>
+    <h3 style="text-align:left">📝 My Essay</h3><div class="ritem">${esc(essayText()) || "<em>No essay written yet.</em>"}</div>
+    <h3 style="text-align:left">🔎 Self-Score (talk with your teacher)</h3>
+    <table style="text-align:left"><tr><th>Area</th><th>Ask yourself…</th><th>My score (1–4)</th></tr>
+      <tr><td>🎯 Purpose/Structure</td><td>Is my central idea clear? Is my essay organized with varied transitions?</td><td>___</td></tr>
+      <tr><td>🧱 Development</td><td>Did I use and cite evidence from both sources and explain it?</td><td>___</td></tr>
+      <tr><td>🎩 Language</td><td>Did I use a formal tone, academic words, and correct conventions?</td><td>___</td></tr></table>
+  </div>`;
+  confetti();
+}
+function copyEssay(){ const t = state.name + "\n\n" + essayText(); try{ navigator.clipboard.writeText(t).then(() => pop("Copied! 📋")); }catch(e){ prompt("Copy your essay:", t); } }
+function confetti(){ const cv = document.getElementById("confetti"), ctx = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
+  const colors = ["#ffc400","#1f6feb","#ff7a00","#1f9d55","#ff4f8b","#7c4dff"];
+  const ps = Array.from({length:170}, () => ({x:Math.random()*cv.width, y:-20-Math.random()*cv.height*.5, r:5+Math.random()*6, c:colors[Math.floor(Math.random()*6)], vy:2+Math.random()*3, vx:-1.5+Math.random()*3, a:Math.random()*6}));
+  let f = 0; (function tick(){ ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p => { p.y += p.vy; p.x += p.vx; p.a += .1; ctx.fillStyle = p.c; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6); ctx.restore(); });
+    if(++f < 260) requestAnimationFrame(tick); else ctx.clearRect(0,0,cv.width,cv.height); })(); }
+
+/* ---------- TEACHER ---------- */
+function teacherReset(){ const pin = prompt("Teacher PIN:"); if(pin === null) return; if(pin !== TEACHER_PIN){ alert("Incorrect PIN."); return; }
+  const who = prompt("Type the student's name to reset (or ALL to reset every student on this device):", state ? state.name : ""); if(!who) return;
+  try{ if(who.trim().toUpperCase() === "ALL") Object.keys(localStorage).filter(k => k.startsWith(STORE)).forEach(k => localStorage.removeItem(k)); else localStorage.removeItem(skey(who)); }catch(e){}
+  state = null; render(); }
+
+/* Shuffle 4-option MC choices once (fixed seed) */
+(function(){ let seed = 4242; const rnd = () => (seed = (seed*9301 + 49297) % 233280) / 233280;
+  LESSONS.forEach(l => (l.acts || []).forEach(a => { if(a.t !== "mc" || a.c.length < 4 || a.id === "m3a") return;
+    const idx = a.c.map((_,j) => j); for(let k = idx.length-1; k > 0; k--){ const r = Math.floor(rnd()*(k+1)); [idx[k],idx[r]] = [idx[r],idx[k]]; }
+    a.c = idx.map(j => a.c[j]); a.a = idx.indexOf(a.a); }));
+})();
+
+/* ---------- BOOT ---------- */
+(function(){ const n = lastName(); if(n){ const s = loadFor(n); if(s) state = s; } render(); })();
+</script>
+</body>
+</html>
